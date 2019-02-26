@@ -20,8 +20,8 @@
   "engineStrict": true,
   "devDependencies": {
     "babel": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "chai": "~3.5.0",
     "grunt": "^1.0.1",
     "grunt-babel": "~6.0.0",
