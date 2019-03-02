@@ -1,9 +1,7 @@
-import {QueryCtrl} from 'app/plugins/sdk';
-import './css/query-editor.css!'
+import { QueryCtrl } from 'app/plugins/sdk';
 
-export class GenericDatasourceQueryCtrl extends QueryCtrl {
-
-  constructor($scope, $injector)  {
+export class StreamingQueryCtrl extends QueryCtrl {
+  constructor($scope, $injector) {
     super($scope, $injector);
 
     this.scope = $scope;
@@ -11,18 +9,9 @@ export class GenericDatasourceQueryCtrl extends QueryCtrl {
     this.target.type = this.target.type || 'timeserie';
   }
 
-  getOptions(query) {
-    return this.datasource.metricFindQuery(query || '');
-  }
-
-  toggleEditorMode() {
-    this.target.rawQuery = !this.target.rawQuery;
-  }
-
   onChangeInternal() {
     this.panelCtrl.refresh(); // Asks the panel to refresh data.
   }
 }
 
-GenericDatasourceQueryCtrl.templateUrl = 'partials/query.editor.html';
-
+StreamingQueryCtrl.templateUrl = 'partials/query.editor.html';
