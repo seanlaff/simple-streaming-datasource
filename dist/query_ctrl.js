@@ -32,6 +32,9 @@ var StreamingQueryCtrl = exports.StreamingQueryCtrl = function (_QueryCtrl) {
   _createClass(StreamingQueryCtrl, [{
     key: 'onChangeInternal',
     value: function onChangeInternal() {
+      debugger;
+      this.datasource.closeStream(this.panel.id);
+      this.panelCtrl.dataStream = null;
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
   }]);

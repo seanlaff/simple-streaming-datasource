@@ -10,6 +10,10 @@ export class StreamingQueryCtrl extends QueryCtrl {
   }
 
   onChangeInternal() {
+    debugger;
+    this.datasource.closeStream(this.panel.id);
+
+    this.panelCtrl.dataStream = null;
     this.panelCtrl.refresh(); // Asks the panel to refresh data.
   }
 }

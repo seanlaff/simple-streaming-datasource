@@ -28,13 +28,13 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		panic("expected http.ResponseWriter to be an http.Flusher")
 	}
 
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(100 * time.Millisecond)
 	for {
 		select {
 		case t := <-ticker.C:
 			currentPoint := &datapoint{
 				Series:    1,
-				Timestamp: t.Unix(),
+				Timestamp: t.UnixNano() / 1000000, // JS likes ms timestamps
 				Value:     rand.Intn(10),
 			}
 			j, _ := json.Marshal(currentPoint)
