@@ -19,6 +19,12 @@ module.exports = function(grunt) {
         src: ['README.md'],
         dest: 'dist',
       },
+      dashboards: {
+        expand: true,
+        cwd: 'src/dashboards',
+        src: ['*.json'],
+        dest: 'dist/dashboards/',
+      },
     },
 
     watch: {
@@ -49,5 +55,5 @@ module.exports = function(grunt) {
     },
   });
 
-  grunt.registerTask('default', ['clean', 'copy:src_to_dist', 'copy:pluginDef', 'babel']);
+  grunt.registerTask('default', ['clean', 'copy:src_to_dist', 'copy:pluginDef', 'copy:dashboards', 'babel']);
 };

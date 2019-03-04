@@ -6,6 +6,8 @@
   "metrics": true,
   "annotations": false,
 
+  "includes": [{ "type": "dashboard", "name": "Streaming Demo Dashboard", "path": "dashboards/demodashboard.json" }],
+
   "info": {
     "description": "An end to end example of live streaming data in Grafana",
     "author": {
@@ -21,6 +23,6 @@
   },
 
   "dependencies": {
-    "grafanaVersion": "3.x.x"
+    "grafanaVersion": "5.x.x"
   }
 }

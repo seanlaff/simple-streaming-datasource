@@ -36,7 +36,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		numSeries, _ = strconv.Atoi(numSeriesParam)
 	}
 
-	ticker := time.NewTicker(100 * time.Millisecond)
+	ticker := time.NewTicker(50 * time.Millisecond)
 	for {
 		select {
 		case t := <-ticker.C:

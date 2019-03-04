@@ -29,7 +29,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 // We return a StreamHandler wrapped in a promise from the datasource's
 // Query method. Grafana expects this object to have a `subscribe` method,
-// which it knows how to read live data from.
+// which it reads live data from.
 var StreamHandler = exports.StreamHandler = function () {
   function StreamHandler(options, datasource) {
     var _this = this;
@@ -38,14 +38,14 @@ var StreamHandler = exports.StreamHandler = function () {
 
     this.options = options;
     this.ds = datasource;
-    this.subject = new rxjs.Subject();
+    this.subject = new rxjs.Subject(); // Where we'll publish our data
     this.subscribe = function (options) {
-      // To avoid destroying the browser with repaints, add a throttle
+      // To avoid destroying the browser with repaints, add a throttle (You may want to tweak this)
       var throttledSubject = _this.subject.pipe(rxjs.operators.throttleTime(100));
       return throttledSubject.subscribe(options);
     };
     this.reader = null;
-    this.metrics = {};
+    this.metrics = {}; // A local copy of our data that we'll operate on before sending to the rxjs Subject
   }
 
   _createClass(StreamHandler, [{
@@ -53,7 +53,6 @@ var StreamHandler = exports.StreamHandler = function () {
     value: function open() {
       var _this2 = this;
 
-      debugger;
       var request = new Request(this.ds.url + '?numSeries=' + this.options.targets[0].numSeries);
       fetch(request).then(function (response) {
         // In the real world its likely that our json gets chopped into
@@ -62,16 +61,14 @@ var StreamHandler = exports.StreamHandler = function () {
         return ndjsonStream.default(response.body);
       }).then(function (s) {
         _this2.reader = s.getReader(); // Save the reader so we can cancel it later
-        var _read = void 0; //handler
+        var _readHandler = void 0;
 
-        _this2.reader.read().then(_read = function read(result) {
+        _this2.reader.read().then(_readHandler = function readHandler(result) {
           if (result.done) {
             return;
           }
-
           _this2.handleMessage(result.value);
-
-          _this2.reader.read().then(_read);
+          _this2.reader.read().then(_readHandler);
         });
       });
     }
@@ -80,33 +77,33 @@ var StreamHandler = exports.StreamHandler = function () {
     value: function handleMessage(msg) {
       var _this3 = this;
 
-      var seriesList = [];
-      var oldestTimeMS = void 0;
-      var earliestTimeMS = this.options.range.from.unix() * 1000;
+      var oldestTimestamp = this.options.range.from.unix() * 1000;
+      var mostRecentTimestamp = this.options.range.to.unix() * 1000;
 
-      var indicator = {
-        target: msg.series,
-        datapoints: []
-      };
+      // Assuming the data we're being streamed in chronologically ordered
+      if (msg.timestamp > mostRecentTimestamp) {
+        mostRecentTimestamp = msg.timestamp;
+      }
 
-      oldestTimeMS = msg.timestamp;
-      indicator.datapoints.push([msg.value, msg.timestamp]);
-
-      var series = this.metrics[indicator.target];
+      // See if we have any data already for this target
+      var series = this.metrics[msg.series];
       if (!series) {
-        series = { target: indicator.target, datapoints: [] };
-        this.metrics[indicator.target] = series;
+        series = { target: msg.series, datapoints: [] };
+        this.metrics[msg.series] = series;
       }
-      series.datapoints = [].concat(_toConsumableArray(series.datapoints), _toConsumableArray(indicator.datapoints));
+      series.datapoints = [].concat(_toConsumableArray(series.datapoints), [[msg.value, msg.timestamp]]); // Add our new point to the end
 
-      // Slide the "window" and remove older points
+      // Slide the "window" by removing any points that are older than the latest point,
+      // minus the width of the current time range
       series.datapoints = series.datapoints.filter(function (p) {
-        return p[1] > oldestTimeMS - (_this3.options.range.to.unix() * 1000 - _this3.options.range.from.unix() * 1000);
+        return p[1] > mostRecentTimestamp - (_this3.options.range.to.unix() * 1000 - _this3.options.range.from.unix() * 1000);
       });
-      if (series.datapoints[0] && series.datapoints[0][1] && series.datapoints[0][1] > earliestTimeMS) {
-        earliestTimeMS = series.datapoints[0][1];
+
+      // Grab the timestamp of the earliest point still in the datapoints array, we'll
+      // move the time window forward to match it
+      if (series.datapoints[0] && series.datapoints[0][1] && series.datapoints[0][1] > oldestTimestamp) {
+        oldestTimestamp = series.datapoints[0][1];
       }
-      seriesList.push(series);
 
       var ts = Object.keys(this.metrics).map(function (key) {
         return _this3.metrics[key];
@@ -114,7 +111,7 @@ var StreamHandler = exports.StreamHandler = function () {
 
       this.subject.next({
         data: ts,
-        range: { from: (0, _moment2.default)(earliestTimeMS), to: (0, _moment2.default)(oldestTimeMS) }
+        range: { from: (0, _moment2.default)(oldestTimestamp), to: (0, _moment2.default)(mostRecentTimestamp) }
       });
     }
   }, {
