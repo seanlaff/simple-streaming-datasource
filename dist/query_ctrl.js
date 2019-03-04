@@ -24,17 +24,30 @@ var StreamingQueryCtrl = exports.StreamingQueryCtrl = function (_QueryCtrl) {
     var _this = _possibleConstructorReturn(this, (StreamingQueryCtrl.__proto__ || Object.getPrototypeOf(StreamingQueryCtrl)).call(this, $scope, $injector));
 
     _this.scope = $scope;
-    _this.target.target = _this.target.target || 'select metric';
-    _this.target.type = _this.target.type || 'timeserie';
+    _this.target.numSeries = _this.target.numSeries || 1;
     return _this;
   }
 
   _createClass(StreamingQueryCtrl, [{
     key: 'onChangeInternal',
     value: function onChangeInternal() {
-      debugger;
       this.datasource.closeStream(this.panel.id);
+
+      // So here's the only real hack. We want to kill the old stream and open a new one
+      // with the new query. Normally, this.panelCtrl.refresh() would take care of shooting
+      // off a new call to datasource.query() however there's a conditional inside grafana's
+      // onMetricsPanelRefresh() that prevents calling datasource.query() again if it sees that
+      // this panel is connected to a datastream.
+      //
+      // To get around that, we'll null out the dataStream... which allows onMetricsPanelRefresh()
+      // to call datasource.query()... which opens a new stream.
+      //
+      // Unfortunately this same behavior is why changing the time range will not affect an
+      // existing streaming panel unless you save and refresh the dashboard.
+      //
+      // I'll open a PR to the team and see if I can get some more feedback on why that behavior exists.
       this.panelCtrl.dataStream = null;
+
       this.panelCtrl.refresh(); // Asks the panel to refresh data.
     }
   }]);

@@ -41,7 +41,7 @@ var StreamHandler = exports.StreamHandler = function () {
     this.subject = new rxjs.Subject();
     this.subscribe = function (options) {
       // To avoid destroying the browser with repaints, add a throttle
-      var throttledSubject = _this.subject.pipe(rxjs.operators.throttleTime(1000));
+      var throttledSubject = _this.subject.pipe(rxjs.operators.throttleTime(100));
       return throttledSubject.subscribe(options);
     };
     this.reader = null;
@@ -53,7 +53,8 @@ var StreamHandler = exports.StreamHandler = function () {
     value: function open() {
       var _this2 = this;
 
-      var request = new Request('' + this.ds.url);
+      debugger;
+      var request = new Request(this.ds.url + '?numSeries=' + this.options.targets[0].numSeries);
       fetch(request).then(function (response) {
         // In the real world its likely that our json gets chopped into
         // chunks when streamed from the backend. ndjsonStream handles

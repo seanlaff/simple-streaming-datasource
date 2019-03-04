@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -28,18 +29,27 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		panic("expected http.ResponseWriter to be an http.Flusher")
 	}
 
+	// How many different metrics to generate
+	numSeries := 1
+	numSeriesParam := r.URL.Query().Get("numSeries")
+	if numSeriesParam != "" {
+		numSeries, _ = strconv.Atoi(numSeriesParam)
+	}
+
 	ticker := time.NewTicker(100 * time.Millisecond)
 	for {
 		select {
 		case t := <-ticker.C:
-			currentPoint := &datapoint{
-				Series:    1,
-				Timestamp: t.UnixNano() / 1000000, // JS likes ms timestamps
-				Value:     rand.Intn(10),
+			for i := 0; i < numSeries; i++ {
+				currentPoint := &datapoint{
+					Series:    i,
+					Timestamp: t.UnixNano() / 1000000, // JS likes ms timestamps
+					Value:     rand.Intn(10) + 10*i,
+				}
+				j, _ := json.Marshal(currentPoint)
+				fmt.Fprintf(w, "%s\n", j)
+				flusher.Flush() // Trigger "chunked" encoding and send a chunk...
 			}
-			j, _ := json.Marshal(currentPoint)
-			fmt.Fprintf(w, "%s\n", j)
-			flusher.Flush() // Trigger "chunked" encoding and send a chunk...
 		}
 	}
 

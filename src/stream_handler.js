@@ -9,18 +9,18 @@ export class StreamHandler {
   constructor(options, datasource) {
     this.options = options;
     this.ds = datasource;
-    this.subject = new rxjs.Subject();
+    this.subject = new rxjs.Subject(); // Where we publish our data
     this.subscribe = options => {
-      // To avoid destroying the browser with repaints, add a throttle
-      var throttledSubject = this.subject.pipe(rxjs.operators.throttleTime(1000));
+      // To avoid destroying the browser with repaints, add a throttle (You may want to tweak this)
+      var throttledSubject = this.subject.pipe(rxjs.operators.throttleTime(100));
       return throttledSubject.subscribe(options);
     };
     this.reader = null;
-    this.metrics = {};
+    this.metrics = {}; // A local copy of our data
   }
 
   open() {
-    var request = new Request(`${this.ds.url}`);
+    var request = new Request(`${this.ds.url}?numSeries=${this.options.targets[0].numSeries}`);
     fetch(request)
       .then(response => {
         // In the real world its likely that our json gets chopped into
