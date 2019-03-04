@@ -6,7 +6,7 @@ Inspired by the live-streaming [talk](https://www.youtube.com/watch?v=bPrDTvlNIj
 
 ![live streaming dashboard animation](/livedata.gif "live streaming dashboard")
 
-This example fixes some of the short commings mentioned mentioned in the talk
+This example fixes some of the short commings mentioned in the talk
 
 * Panel repaints are now throttled via RXJS throttling. You can tune the frequency to your use case.
 * Streams are cancelled/restarted when queries change
