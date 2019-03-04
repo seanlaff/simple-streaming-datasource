@@ -15,7 +15,7 @@ This example fixes some of the short commings mentioned mentioned in the talk
 
 Install as you would any grafana datasource. Then, run `go run server.go`. This will spawn a server at `http://localhost:8080` that this datasource reads data from. Also included is a demo dashboard.
 
-By default, the sever will stream data at 50ms, and the datasource plugin will throttle repaints to 100ms.
+By default, the server will stream data at 50ms, and the datasource plugin will throttle repaints to 100ms.
 
 ## Limitations
 
