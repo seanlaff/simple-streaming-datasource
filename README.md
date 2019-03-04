@@ -11,6 +11,9 @@ This example fixes some of the short commings mentioned in the talk
 * Panel repaints are now throttled via RXJS throttling. You can tune the frequency to your use case.
 * Streams are cancelled/restarted when queries change
 
+## Motivation
+Streaming data is a great way to reduce pressure on your metric backend/network. Rather than using a 5s dashboard refresh (which requests duplicate points over and over again), stream new data as its avaiable!
+
 ## Running the example
 
 Install as you would any grafana datasource. Then, run `go run server.go`. This will spawn a server at `http://localhost:8080` that this datasource reads data from. Also included is a demo dashboard.
