@@ -1,8 +1,8 @@
 ## Simple Streaming Datasource
 
-### End-to-end Grafana live streaming implementation
+Inspired by the live-streaming [talk](https://www.youtube.com/watch?v=bPrDTvlNIj8&feature=youtu.be&t=4754) at Grafanacon 2019, this is a living example of streaming within a datasource- including a reference server that streams random data. 
 
-Inspired by the live-streaming [talk](https://www.youtube.com/watch?v=bPrDTvlNIj8&feature=youtu.be&t=4754) at Grafanacon 2019, this is a living example of streaming within a datasource- including a reference server that streams random data.
+_This example relies on unfinalized behavior within Grafana, and may break_
 
 ![live streaming dashboard animation](/livedata.gif "live streaming dashboard")
 
