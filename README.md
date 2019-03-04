@@ -19,7 +19,7 @@ By default, the sever will stream data at 50ms, and the datasource plugin will t
 
 ## Limitations
 
-* Clicking the dashboard refresh, changing timerange, and some other report interactions do not cause the panel to "refresh".
+* Clicking the dashboard refresh, changing timerange, and some other report interactions do not cause the panel to "refresh". Here's a dicusssion about it https://github.com/grafana/grafana/issues/15760
 * Backend server doesn't support providing a start/end time (it always starts streaming from time.Now()) for simplicity.
 * Plugin makes no attempt to order the data. If its streamed in unordered, some backwards lines will be drawn.
 * Adding more than one query in the datasource is currently unsupported, but could be easily added with some more state management. You'll likely want to multiplex all queries through the same stream (rather than open a stream per query) if your datasource can support it.
