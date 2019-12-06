@@ -1,8 +1,8 @@
+> As of Grafana v6.4, the hacks in this repo are no longer supported/necessary. Grafana v6.4 added native streaming support after positive community feedback. Please refer the offical streaming examples in the [testdata-datasource](https://github.com/grafana/grafana/tree/master/public/app/plugins/datasource/testdata) or alternatively, the [loki-datasource](https://github.com/grafana/grafana/tree/master/public/app/plugins/datasource/loki).
+
 ## Simple Streaming Datasource
 
 Inspired by the live-streaming [talk](https://www.youtube.com/watch?v=bPrDTvlNIj8&feature=youtu.be&t=4754) at Grafanacon 2019, this is a living example of streaming within a datasource including a reference server that streams random data.
-
-_This example relies on unfinalized behavior within Grafana, and may break_
 
 ![live streaming dashboard animation](/livedata.gif "live streaming dashboard")
 
